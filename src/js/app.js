@@ -4,6 +4,8 @@ console.log("Desde JS");
 
 document.addEventListener('DOMContentLoaded', function() {
   eventListeners();
+
+  darkMode();
 });
 
 function eventListeners() {
@@ -26,3 +28,14 @@ function menuresponsive () {
   //Metodo para ususarios un poco mas experimentados
   navegacion.classList.toggle('mostrar');
 }
+
+
+function darkMode () {
+  const botonDarckMode = document.querySelector('.dark-mode-boton');
+
+    botonDarckMode.addEventListener('click', function() {
+      document.body.classList.toggle('dark-mode');
+      console.log('Click en icono darkmode')
+  });
+}
+
