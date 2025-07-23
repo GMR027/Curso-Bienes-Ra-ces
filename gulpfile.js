@@ -50,7 +50,7 @@ function versionWebp() {
     return src(paths.imagenes)
         .pipe(webp())
         .pipe(dest('build/img'))
-        .pipe(notify({ message: 'Imagen Completada' }));
+        .pipe(notify('Imagen web completada'));
 }
 
 
