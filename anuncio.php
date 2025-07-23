@@ -1,36 +1,5 @@
+<?php  include './includes/templates/header.php' ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/build/css/app.css">
-  <title>Bienes Raices</title>
-</head>
-<body>
-  <header class="header">
-    <div class="contenedor contenido-header">
-      <div class="barra">
-        <a href="/">
-          <img src="../build/img/logo.svg" alt="logo">
-        </a>
-
-        <div class="mobile-menu">
-          <img src="/build/img/barras.svg" alt="barras-responsive">
-        </div>
-
-        <div class="derecha">
-          <img src="/build/img/dark-mode.svg" alt="darckmod" class="dark-mode-boton">
-          <nav class="navegacion">
-            <a href="/pages/nosotros.html">Nosotros</a>
-            <a href="/pages/anuncios.html">Anuncios</a>
-            <a href="/pages/blog.html">Blog</a>
-            <a href="/pages/contacto.html">Contacto</a>
-          </nav>
-        </div>
-      </div> <!--Cierre de barra-->
-    </div>
-  </header>
 
   <main class="contenedor seccion contenido-centrado">
     <h1>Casa en venta frente al bosque</h1>
@@ -63,17 +32,4 @@
     </div>
   </main>
 
-  <footer class="footer seccion">
-    <div class="contenedor contenido-footer">
-      <nav class="navegacion">
-        <a href="nosotros.html">Nosotros</a>
-        <a href="anuncios.html">Anuncios</a>
-        <a href="blog.html">Blog</a>
-        <a href="contacto.html">Contacto</a>
-      </nav>
-    </div>
-    <p class="copyright">Todos los derechos reservados 2025</p>
-  </footer>
-  <script src="/build/js/bundle.min.js"></script>
-</body>
-</html>
+  <?php include './includes/templates/footer.php';?>

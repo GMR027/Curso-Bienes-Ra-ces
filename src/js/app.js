@@ -31,6 +31,27 @@ function menuresponsive () {
 
 
 function darkMode () {
+
+  //configuracion automatica de dark mode mediante la lectura de las preferencias del sistema
+  const aparienciaDarkMode = window.matchMedia('(prefers-color-scheme-dark)');
+  //console.log(aparienciaDarkMode);
+
+  if (aparienciaDarkMode.matches) {
+    document.body.classList.add('dark-mode');
+  } else {
+    document.body.classList.remove('dark-mode');
+  }
+
+  aparienciaDarkMode.addEventListener('change', () => {
+    if (aparienciaDarkMode.matches) {
+      document.body.classList.add('dark-mode');
+      } else {
+        document.body.classList.remove('dark-mode');
+    }
+  });
+
+
+
   const botonDarckMode = document.querySelector('.dark-mode-boton');
 
     botonDarckMode.addEventListener('click', function() {

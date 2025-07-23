@@ -16,14 +16,17 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  .h2 {
+    font-size: 4rem;
+  }
   
   h2, p {
     color: v.$blanco;
   }
 
   h2 {
-    font-size: 4rem;
-    font-size:  v.$black;
+    font-weight: v.$black;
   }
 
   p {
