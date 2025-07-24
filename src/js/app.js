@@ -33,7 +33,7 @@ function menuresponsive () {
 function darkMode () {
 
   //configuracion automatica de dark mode mediante la lectura de las preferencias del sistema
-  const aparienciaDarkMode = window.matchMedia('(prefers-color-scheme-dark)');
+  const aparienciaDarkMode = window.matchMedia('(prefers-color-scheme: dark)');
   //console.log(aparienciaDarkMode);
 
   if (aparienciaDarkMode.matches) {
