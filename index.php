@@ -1,6 +1,6 @@
 <?php
-  $inicio = true; //esta variable esta solo en index por ende solo es activo en esta pagina
-  include './includes/templates/header.php' 
+  require 'includes/funciones.php';
+  incluirTemplate('header', $inicio = true);
 ?>
 
 
@@ -196,4 +196,4 @@
     </section>
   </div> <!--Entrada de blogs-->
 
-  <?php include './includes/templates/footer.php';?>
+  <?php incluirTemplate('footer');?>

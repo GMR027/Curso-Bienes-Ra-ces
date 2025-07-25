@@ -7,7 +7,7 @@
   <title>Bienes Raices</title>
 </head>
 <body>
-  <header class="header <?php echo isset($inicio) ? 'inicio' : '' ?>"> <!-- Se usa isset para validar la variable y no marcar error -->
+  <header class="header <?php echo $inicio ? 'inicio' : '' ?>"> <!-- Se usa isset para validar la variable y no marcar error -->
     <div class="contenedor contenido-header">
       <div class="barra">
         <a href="/">
