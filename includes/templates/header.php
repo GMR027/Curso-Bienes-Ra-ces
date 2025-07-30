@@ -11,7 +11,7 @@
     <div class="contenedor contenido-header">
       <div class="barra">
         <a href="/">
-          <img src="./build/img/logo.svg" alt="logo">
+          <img src="/build/img/logo.svg" alt="logo">
         </a>
 
         <div class="mobile-menu">
@@ -19,7 +19,7 @@
         </div>
 
         <div class="derecha">
-          <img src="build/img/dark-mode.svg" alt="darckmod" class="dark-mode-boton">
+          <img src="/build/img/dark-mode.svg" alt="darckmod" class="dark-mode-boton">
           <nav class="navegacion">
             <a href="/nosotros.php">Nosotros</a>
             <a href="/anuncios.php">Anuncios</a>
