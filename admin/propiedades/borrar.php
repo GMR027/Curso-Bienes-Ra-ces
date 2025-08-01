@@ -1,10 +1,10 @@
 <?php
-  require 'includes/funciones.php';
+  require '../../includes/funciones.php';
   incluirTemplate('header');
 ?>
 
   <main class="contenedor seccion">
-    <h1>Titulo base</h1>
+    <h1>Borrar</h1>
   </main>
 
   <?php incluirTemplate('footer');?>
