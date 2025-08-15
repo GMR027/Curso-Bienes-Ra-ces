@@ -9,7 +9,7 @@
 
   //Consulta para obtener los datos de los vendedores
   $consultaVendedor = "SELECT * FROM Vendedores";
-  $resutladoCVendedores = mysqli_query($baseDatos, $consultaVendedor);
+  $resultadoCVendedores = mysqli_query($baseDatos, $consultaVendedor);
 
 
   // var_dump($baseDatos); para ver la informacion de la conexion
@@ -33,19 +33,32 @@
 
   //Ejecutar el codigo para enviar la informacion a la base de datos
   if ($_SERVER['REQUEST_METHOD'] === 'POST' ) {
-    //echo "<pre>";
-    //var_dump($_POST); 
-    //echo "</pre>"; //forma de ver los datos
-    //echo 'Es un metodo de respuesta POST';
 
-    $titulo = $_POST['titulo'];
-    $precio = $_POST['precio'];
-    $descripcion = $_POST['descripcion'];
-    $habitaciones = $_POST['habitaciones'];
-    $sanitarios = $_POST['wc'];
-    $estacionamiento = $_POST['estacionamientos'];
-    $vendedorid = $_POST['vendedor'];
-    $creacion = $date['Y/m/d'];
+    
+    //echo "<pre>";
+    var_dump($_POST); 
+    echo "</pre>"; //forma de ver los datos
+    echo 'Es un metodo de respuesta POST';
+
+    echo "<pre>";
+    var_dump($_FILES); 
+    echo "</pre>"; //forma de ver los datos
+
+
+
+    $titulo = mysqli_real_escape_string($baseDatos, $_POST['titulo']); //mysqli_real_escape_string() es para sanitizar y proteger los datos.
+    $precio = mysqli_real_escape_string($baseDatos, $_POST['precio']);
+    $descripcion = mysqli_real_escape_string($baseDatos, $_POST['descripcion']);
+    $habitaciones = mysqli_real_escape_string($baseDatos, $_POST['habitaciones']);
+    $sanitarios = mysqli_real_escape_string($baseDatos, $_POST['wc']);
+    $estacionamiento = mysqli_real_escape_string($baseDatos, $_POST['estacionamientos']);
+    $vendedorid = mysqli_real_escape_string($baseDatos, $_POST['vendedor']);
+    $creacion = date('Y/m/d');
+
+    //Asignar files a una variable
+    $imagen = $_FILES['imagen'];
+    //var_dump($imagen);
+
 
     if(!$titulo) {
       $errores[] = 'Debes ingresar un titulo';
@@ -75,14 +88,25 @@
       $errores[] = 'Debes ingresar el vendedor';
     }
 
+    if(!$imagen['name'] || ['error']) {
+      $errores[] = 'La imagen es obligatoria';
+    }
+
+    //validacion por tamano
+    $medida = 1000 * 1000;
+
+    if($imagen['size'] > $medida) {
+      $errores[] = 'El tamano de la imagen supera 1MB';
+    }
+
+
     // var_dump($errores);
     // exit; validador de pruebas
-
     
     //Revisar que el array de errores esta vacio
     if(empty($errores)){
         //Insertar base de datos
-      $query = "INSERT INTO propiedades (titulo, precio, descripcion, habitaciones, wc, estacionamiento, creado, Vendedores_id) VALUES ('$titulo', '$precio', '$descripcion', '$habitaciones', '$sanitarios', '$estacionamiento', $creacion, '$vendedorid')";
+      $query = "INSERT INTO propiedades (titulo, precio, descripcion, habitaciones, wc, estacionamiento, creado, Vendedores_id) VALUES ('$titulo', '$precio', '$descripcion', '$habitaciones', '$sanitarios', '$estacionamiento', '$creacion', '$vendedorid')";
 
       // echo $query; sirve para validar la informacion del query si esta subiendo toda la informacion solicitada en el formulario.
 
@@ -90,7 +114,9 @@
       $resultado = mysqli_query($baseDatos, $query);
 
       if($resultado) {
-        echo 'Informacion publicada';
+        //echo 'Informacion publicada';
+
+        header('Location: /admin');
       }
     } 
   }
@@ -110,9 +136,9 @@
       </div>
     <?php endforeach; ?>
 
-    <form class="formulario" method="POST" action="/admin/propiedades/crear.php">  <!-- Get para cuando se requiera ver datos en la barra nav y POST para no mostrarlos -->
+    <form class="formulario" method="POST" action="/admin/propiedades/crear.php" enctype="multipart/form-data">  <!-- Get para cuando se requiera ver datos en la barra nav y POST para no mostrarlos -->
       <fieldset>
-        <legend>Informacion general de propiedad</legend>
+        <legend>Informacion general de propiedad (No ingresar caracteres especiales o acentos)</legend>
 
         <label for="titulo">Nombre propiedad</label>
         <input type="text" name="titulo" id="titulo" placeholder="Ingresar nombre" value="<?php echo $titulo; ?>">
@@ -144,7 +170,7 @@
         <legend>Vendedor</legend>
         <select name="vendedor">
           <option value="">--Seleccione--</option>
-          <?php while($registro = mysqli_fetch_assoc($resutladoCVendedores)): ?>
+          <?php while($registro = mysqli_fetch_assoc($resultadoCVendedores)): ?>
             <option  <?php echo $vendedorid == $registro['id'] ? 'selected' : ''; ?> value="<?php echo $registro['id']; ?>"> 
               <?php echo $registro['nombre'] . ' ' . $registro['apellido']; ?> 
             </option>

@@ -2,6 +2,7 @@
 
 function conectarBD() : mysqli {
   $baseDatos = mysqli_connect('localhost', 'root', '2705', 'bienes_raices-crud');
+  $baseDatos->set_charset("utf8"); //Indicador para que muestre los acentos y las N
 
   //Forma para validar conexion
   // if($baseDatos) {
