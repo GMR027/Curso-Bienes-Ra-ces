@@ -35,7 +35,7 @@
   if ($_SERVER['REQUEST_METHOD'] === 'POST' ) {
 
     
-    //echo "<pre>";
+    echo "<pre>";
     var_dump($_POST); 
     echo "</pre>"; //forma de ver los datos
     echo 'Es un metodo de respuesta POST';
@@ -88,7 +88,7 @@
       $errores[] = 'Debes ingresar el vendedor';
     }
 
-    if(!$imagen['name'] || ['error']) {
+    if(!$imagen['name'] || $imagen['error']) {
       $errores[] = 'La imagen es obligatoria';
     }
 
@@ -105,8 +105,32 @@
     
     //Revisar que el array de errores esta vacio
     if(empty($errores)){
+
+      //carpeta de imagenes
+      $carpetaIMG = '../../imagenes/';
+      if(!is_dir($carpetaIMG)) {
+        mkdir($carpetaIMG);
+      }
+
+      //generar nombre para imagenes
+      $nombreIMG = md5(uniqid( rand(), true ) );
+
+      //var_dump($nombreIMG); visualizacion de valor de nombre imagen en base a md5 y rand
+
+      //Subir la imagen en formatos jpg y png
+      if($imagen['type'] === 'image/jpeg') {
+        $nombreIMG .= '.jpg';
+        move_uploaded_file( $imagen['tmp_name'], $carpetaIMG . $nombreIMG);
+      } elseif ($imagen['type'] === 'image/png') {
+          $nombreIMG .= '.png';
+          move_uploaded_file( $imagen['tmp_name'], $carpetaIMG . $nombreIMG);
+        } else {
+          $errores[] = 'El formato de imagen no es compartible';
+        }
+      
+
         //Insertar base de datos
-      $query = "INSERT INTO propiedades (titulo, precio, descripcion, habitaciones, wc, estacionamiento, creado, Vendedores_id) VALUES ('$titulo', '$precio', '$descripcion', '$habitaciones', '$sanitarios', '$estacionamiento', '$creacion', '$vendedorid')";
+      $query = "INSERT INTO propiedades (titulo, precio, imagen, descripcion, habitaciones, wc, estacionamiento, creado, Vendedores_id) VALUES ('$titulo', '$precio', '$nombreIMG', '$descripcion', '$habitaciones', '$sanitarios', '$estacionamiento', '$creacion', '$vendedorid')";
 
       // echo $query; sirve para validar la informacion del query si esta subiendo toda la informacion solicitada en el formulario.
 
@@ -147,7 +171,7 @@
         <input type="number" name="precio"  id="precio" placeholder="Precio" value="<?php echo $precio; ?>">
 
         <label for="imagen">Imagen:</label>
-        <input type="file" name="imagen" id="imagen" accept="image/jpeg, image/png">
+        <input type="file" name="imagen" id="imagen" accept="image/jpeg, image/png" value="<?php echo $imagen; ?>">
 
         <label for="descripcion">Descripcion</label>
         <textarea name="descripcion" id="descripcion" ><?php echo $descripcion; ?></textarea>
