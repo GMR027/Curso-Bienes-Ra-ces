@@ -7,6 +7,7 @@
   require '../../includes/config/database.php';
   $baseDatos = conectarBD();
 
+
   //Consulta para obtener los datos de los vendedores
   $consultaVendedor = "SELECT * FROM Vendedores";
   $resultadoCVendedores = mysqli_query($baseDatos, $consultaVendedor);
@@ -140,7 +141,7 @@
       if($resultado) {
         //echo 'Informacion publicada';
 
-        header('Location: /admin');
+        header('Location: /admin?resultado=1');
       }
     } 
   }
