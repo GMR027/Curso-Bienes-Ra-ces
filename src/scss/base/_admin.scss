@@ -12,4 +12,37 @@
   &.error {
     background-color: v.$rojo;
   }
+
+  &.exito {
+    background-color: v.$verde;
+  }
+
+  &.actualizacion {
+    background-color: v.$amarillo;
+  }
+}
+
+table.propiedades {
+  margin-top: 4rem;
+  width: 100%;
+  border-spacing: 0;
+
+  thead {
+    background-color: v.$verde;
+
+    th {
+      color: v.$blanco;
+      padding: 2rem;
+    }
+  }
+
+  .imagen-tabla {
+    width: 10rem;
+  }
+}
+
+.imagen-small {
+  background-size: cover;
+  height: 10rem;
+  width: auto;
 }
