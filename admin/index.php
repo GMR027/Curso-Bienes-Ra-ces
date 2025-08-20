@@ -31,6 +31,8 @@
     <!-- Generador de alerta de propiedad creada -->
     <?php if(intval($mensajePropiedadCreada)=== 1 ): ?>  <!--intval sirve para que tome como igual el valor string del mensaje de header/admin -->
       <p class="alerta exito">Anuncio creado correctamente</p>
+    <?php  elseif(intval($mensajePropiedadCreada) === 2 ): ?>
+      <p class="alerta actualizacion">Anuncio Actualizado correctamente</p>  
     <?php endif;?>
 
 
@@ -57,7 +59,7 @@
           <td>$<?php echo $propiedad['precio']; ?></td>
           <td>
             <a href="" class="boton-rojo-block">Eliminar</a>
-            <a href="" class="boton-azul-block">Actualizar</a>
+            <a href="/admin/propiedades/actualizar.php?id=<?php echo $propiedad['id']; ?>" class="boton-azul-block">Actualizar</a>
           </td>
         </tr>
         <?php endwhile; ?>

@@ -16,6 +16,10 @@
   &.exito {
     background-color: v.$verde;
   }
+
+  &.actualizacion {
+    background-color: v.$amarillo;
+  }
 }
 
 table.propiedades {
@@ -35,4 +39,10 @@ table.propiedades {
   .imagen-tabla {
     width: 10rem;
   }
+}
+
+.imagen-small {
+  background-size: cover;
+  height: 10rem;
+  width: auto;
 }
