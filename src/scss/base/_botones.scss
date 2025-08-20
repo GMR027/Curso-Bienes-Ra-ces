@@ -2,21 +2,22 @@
 @use 'mixins' as m;
 
 .boton-amarillo {
-  @include m.boton(v.$amarillo, block)
+  @include m.boton(v.$amarillo, block);
 }
 
 .boton-amarillo-corto {
-  @include m.boton(v.$amarillo, inline-block)
+  @include m.boton(v.$amarillo, inline-block);
 }
 
 .boton-verde {
-  @include m.boton(v.$verde, inline-block)
+  @include m.boton(v.$verde, inline-block);
 }
 
 .boton-rojo-block {
-  @include m.boton(v.$rojo, block)
+  @include m.boton(v.$rojo, block);
+  width: 100%;
 }
 
 .boton-azul-block {
-  @include m.boton(v.$azul, block)
+  @include m.boton(v.$azul, block);
 }
