@@ -17,6 +17,33 @@
   //4. Consultar la base de datos
   $listadoPropiedades = mysqli_query($baseDatos, $query);
 
+  
+  //Apartado de eliminacion de propiedad
+  if($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $idEliminar = $_POST['idEliminar'];
+    $idEliminar = filter_var($idEliminar, FILTER_VALIDATE_INT);
+    //var_dump($idEliminar);
+
+    if($idEliminar) {
+      //Consulta de solicitud de imagen
+      $cImagen = "SELECT imagen FROM  propiedades WHERE id = $idEliminar";
+      $rcImagen = mysqli_query($baseDatos, $cImagen);
+      $imagenPropiedad = mysqli_fetch_assoc($rcImagen);
+      //var_dump( $imagenPropiedad);
+      unlink('../imagenes/' . $imagenPropiedad['imagen']);
+
+      $eliminar = "DELETE FROM  propiedades WHERE id = $idEliminar";
+      $accion = mysqli_query($baseDatos, $eliminar);
+      echo $eliminar;
+
+      if($eliminar) {
+        header('location: /admin?resultado=3');
+      }
+    }
+  }
+
+
+
   //Muestra mensaje de creacion de propiedad
   $mensajePropiedadCreada = $_GET['resultado'] ?? null; //validador ?? null en caso que no lo encuentre asigna null
   
@@ -32,7 +59,9 @@
     <?php if(intval($mensajePropiedadCreada)=== 1 ): ?>  <!--intval sirve para que tome como igual el valor string del mensaje de header/admin -->
       <p class="alerta exito">Anuncio creado correctamente</p>
     <?php  elseif(intval($mensajePropiedadCreada) === 2 ): ?>
-      <p class="alerta actualizacion">Anuncio Actualizado correctamente</p>  
+      <p class="alerta actualizacion">Anuncio Actualizado correctamente</p> 
+    <?php  elseif(intval($mensajePropiedadCreada) === 3 ): ?>
+      <p class="alerta error">Anuncio Eliminado correctamente</p>  
     <?php endif;?>
 
 
@@ -58,7 +87,10 @@
           <td><img src='/imagenes/<?php echo $propiedad['imagen']; ?>' alt="imagen" class="imagen-tabla"></td>
           <td>$<?php echo $propiedad['precio']; ?></td>
           <td>
-            <a href="" class="boton-rojo-block">Eliminar</a>
+            <form action="" method="POST">
+              <input type="hidden" name="idEliminar" value="<?php echo $propiedad['id']; ?>">
+              <input type="submit" value="Eliminar" class="boton-rojo-block">
+            </form>
             <a href="/admin/propiedades/actualizar.php?id=<?php echo $propiedad['id']; ?>" class="boton-azul-block">Actualizar</a>
           </td>
         </tr>

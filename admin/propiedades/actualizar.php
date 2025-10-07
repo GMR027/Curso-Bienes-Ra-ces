@@ -18,7 +18,7 @@
   $baseDatos = conectarBD();
 
   //Consulta para obtener datos de la propiedad
-  $consultaPropiedad = "SELECT * FROM propiedades WHERE id = ${id}";
+  $consultaPropiedad = "SELECT * FROM propiedades WHERE id = $id";
   $resultadoPropiedad = mysqli_query($baseDatos, $consultaPropiedad);
   $propiedad = mysqli_fetch_assoc($resultadoPropiedad);
   //var_dump($propiedad);
