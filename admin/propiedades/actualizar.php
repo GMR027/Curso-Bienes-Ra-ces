@@ -3,6 +3,10 @@
   ini_set('display_errors', '1');
   ini_set('display_startup_errors', '1');
 
+  require '../../includes/app.php';
+  estadoLogin();
+
+
 
   //Validar que al seleccionar el boton actualizar sea un id valido
   $id = $_GET['id'];
@@ -14,7 +18,6 @@
   }
 
   //Base de datos
-  require '../../includes/config/database.php';
   $baseDatos = conectarBD();
 
   //Consulta para obtener datos de la propiedad
@@ -185,7 +188,7 @@
   }
   
 
-  require '../../includes/funciones.php';
+  
   incluirTemplate('header');
 ?>
 

@@ -1,0 +1,17 @@
+{
+    "name": "edgar/curso-bienes-ra-ces",
+    "description": "Proyecto con POO",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "./clases"
+        }
+    },
+    "authors": [
+        {
+            "name": "edgar",
+            "email": "e.gm27@outlook.com"
+        }
+    ],
+    "require": {}
+}

@@ -1,8 +1,7 @@
 <?php
-  require 'includes/funciones.php';
+  require 'includes/app.php';
   incluirTemplate('header');
 
-  require 'includes/config/database.php';
   $baseDatos = conectarBD();
 
   $idPropiedad = $_GET['idPropiedad'] ?? null;

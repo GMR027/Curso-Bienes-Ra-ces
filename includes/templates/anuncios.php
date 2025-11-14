@@ -1,5 +1,4 @@
 <?php 
-  require 'includes/config/database.php';
   $baseDatos = conectarBD();
 
   //Consulta

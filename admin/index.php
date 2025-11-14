@@ -1,6 +1,8 @@
 <?php
+require '../includes/app.php';
+estadoLogin();
 
-  require '../includes/config/database.php';  //1. Importar la conexion a la base de datos
+ //1. Importar la conexion a la base de datos
   $baseDatos = conectarBD();
   //var_dump($baseDatos);
 
@@ -48,7 +50,6 @@
   $mensajePropiedadCreada = $_GET['resultado'] ?? null; //validador ?? null en caso que no lo encuentre asigna null
   
   //Incluye un template
-  require '../includes/funciones.php';
   incluirTemplate('header');
 ?>
 
@@ -62,6 +63,8 @@
       <p class="alerta actualizacion">Anuncio Actualizado correctamente</p> 
     <?php  elseif(intval($mensajePropiedadCreada) === 3 ): ?>
       <p class="alerta error">Anuncio Eliminado correctamente</p>  
+    <?php  elseif(intval($mensajePropiedadCreada) === 4 ): ?>
+      <p class="alerta exito">Inicio de sesion correctamente</p> 
     <?php endif;?>
 
 

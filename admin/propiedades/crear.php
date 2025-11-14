@@ -3,8 +3,17 @@
   ini_set('display_errors', '1');
   ini_set('display_startup_errors', '1');
 
+  require '../../includes/app.php';
+
+  //POO propiedad
+  use App\Propiedad;
+  
+
+  //Autentificacion
+  estadoLogin();
+
+
   //Base de datos
-  require '../../includes/config/database.php';
   $baseDatos = conectarBD();
 
 
@@ -35,6 +44,9 @@
   //Ejecutar el codigo para enviar la informacion a la base de datos
   if ($_SERVER['REQUEST_METHOD'] === 'POST' ) {
 
+    $propiedad = new Propiedad($_POST);
+    $propiedad->guardar();
+    
     
     echo "<pre>";
     var_dump($_POST); 
@@ -53,7 +65,7 @@
     $habitaciones = mysqli_real_escape_string($baseDatos, $_POST['habitaciones']);
     $sanitarios = mysqli_real_escape_string($baseDatos, $_POST['wc']);
     $estacionamiento = mysqli_real_escape_string($baseDatos, $_POST['estacionamientos']);
-    $vendedorid = mysqli_real_escape_string($baseDatos, $_POST['vendedor']);
+    $vendedorid = mysqli_real_escape_string($baseDatos, $_POST['Vendedores_id']);
     $creacion = date('Y/m/d');
 
     //Asignar files a una variable
@@ -130,8 +142,7 @@
         }
       
 
-        //Insertar base de datos
-      $query = "INSERT INTO propiedades (titulo, precio, imagen, descripcion, habitaciones, wc, estacionamiento, creado, Vendedores_id) VALUES ('$titulo', '$precio', '$nombreIMG', '$descripcion', '$habitaciones', '$sanitarios', '$estacionamiento', '$creacion', '$vendedorid')";
+        
 
       // echo $query; sirve para validar la informacion del query si esta subiendo toda la informacion solicitada en el formulario.
 
@@ -147,7 +158,7 @@
   }
   
 
-  require '../../includes/funciones.php';
+  
   incluirTemplate('header');
 ?>
 
@@ -193,7 +204,7 @@
 
       <fieldset>
         <legend>Vendedor</legend>
-        <select name="vendedor">
+        <select name="Vendedores_id">
           <option value="">--Seleccione--</option>
           <?php while($registro = mysqli_fetch_assoc($resultadoCVendedores)): ?>
             <option  <?php echo $vendedorid == $registro['id'] ? 'selected' : ''; ?> value="<?php echo $registro['id']; ?>"> 

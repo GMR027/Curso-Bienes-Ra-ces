@@ -3,6 +3,14 @@ error_reporting(E_ALL);
 ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 
+if(!isset($_SESSION)) {
+  session_start();
+}
+//var_dump($_SESSION);
+//Revisar en que navegador se encuetra logeado
+$ingreso = $_SESSION['login'] ?? false;
+// var_dump($ingreso);
+
 ?>
 
 <!DOCTYPE php>
@@ -32,6 +40,9 @@ ini_set('display_startup_errors', '1');
             <a href="/anuncios.php">Anuncios</a>
             <a href="/blog.php">Blog</a>
             <a href="/contacto.php">Contacto</a>
+            <?php if($ingreso): ?>
+            <a href="/cerrar.php">Cerrar sesion</a>
+            <?php endif; ?>
           </nav>
         </div>
       </div> <!--Cierre de barra-->
