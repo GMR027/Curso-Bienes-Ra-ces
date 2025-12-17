@@ -1,163 +1,61 @@
 <?php
-  error_reporting(E_ALL);
-  ini_set('display_errors', '1');
-  ini_set('display_startup_errors', '1');
-
   require '../../includes/app.php';
 
-  //POO propiedad
-  use App\Propiedad;
-  
+//POO propiedad
+use App\Propiedad;
+use App\Vendedores;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
   //Autentificacion
   estadoLogin();
 
 
-  //Base de datos
-  $baseDatos = conectarBD();
+  $errores = Propiedad::getErrores();
+  $propiedad = new Propiedad();
 
-
-  //Consulta para obtener los datos de los vendedores
-  $consultaVendedor = "SELECT * FROM Vendedores";
-  $resultadoCVendedores = mysqli_query($baseDatos, $consultaVendedor);
-
-
-  // var_dump($baseDatos); para ver la informacion de la conexion
-
-  // echo "<pre>";
-  // var_dump($_POST); $_GET, $_SERVER similar
-  // echo "</pre>"; forma de ver los datos
-
-  //Validador de formulario
-  $errores = [];
-
-
-  //Variables en blanco para que con la propiedad valie en los input se quede la informacion escrita en caso de que no se suba la publicacion debido algun error de informacion no ingresada
-  $titulo = '';
-  $precio = '';
-  $descripcion = '';
-  $habitaciones = '';
-  $sanitarios = '';
-  $estacionamiento = '';
-  $vendedorid = '';
+  //Consulta para obtener vendedores
+  $vendedores = Vendedores::all();
+  //debuguear($vendedores);
+  
 
   //Ejecutar el codigo para enviar la informacion a la base de datos
   if ($_SERVER['REQUEST_METHOD'] === 'POST' ) {
 
-    $propiedad = new Propiedad($_POST);
-    $propiedad->guardar();
-    
-    
-    echo "<pre>";
-    var_dump($_POST); 
-    echo "</pre>"; //forma de ver los datos
-    echo 'Es un metodo de respuesta POST';
+    $propiedad = new Propiedad($_POST['propiedad']);
+    //debuguear($_FILES['propiedad']);
 
-    echo "<pre>";
-    var_dump($_FILES); 
-    echo "</pre>"; //forma de ver los datos
+    //generar nombre para imagenes
+      $nombreIMG = md5(uniqid( rand(), true )) . '.jpg';
 
-
-
-    $titulo = mysqli_real_escape_string($baseDatos, $_POST['titulo']); //mysqli_real_escape_string() es para sanitizar y proteger los datos.
-    $precio = mysqli_real_escape_string($baseDatos, $_POST['precio']);
-    $descripcion = mysqli_real_escape_string($baseDatos, $_POST['descripcion']);
-    $habitaciones = mysqli_real_escape_string($baseDatos, $_POST['habitaciones']);
-    $sanitarios = mysqli_real_escape_string($baseDatos, $_POST['wc']);
-    $estacionamiento = mysqli_real_escape_string($baseDatos, $_POST['estacionamientos']);
-    $vendedorid = mysqli_real_escape_string($baseDatos, $_POST['Vendedores_id']);
-    $creacion = date('Y/m/d');
-
-    //Asignar files a una variable
-    $imagen = $_FILES['imagen'];
-    //var_dump($imagen);
-
-
-    if(!$titulo) {
-      $errores[] = 'Debes ingresar un titulo';
+    if($_FILES['propiedad']['tmp_name']['imagenCargada']) {
+      $manager = new ImageManager(Driver::class);
+      $imagen = $manager->read($_FILES['propiedad']['tmp_name']['imagenCargada'])->cover(800, 600);
+      $propiedad->setImage($nombreIMG);
+      //debuguear($imagen);
     }
 
-    if(!$precio) {
-      $errores[] = 'Debes ingresar un precio';
-    }
-
-    if(strlen($descripcion) < 50) {  //< indica menor que
-      $errores[] = 'Debes ingresar una descripcion mas amplia mayor a 50 caracteres';
-    }
-
-    if(!$habitaciones) {
-      $errores[] = 'Debes ingresar el numero de habitaciones';
-    }
-
-    if(!$sanitarios) {
-      $errores[] = 'Debes ingresar el numero de sanitarios';
-    }
-
-    if(!$estacionamiento) {
-      $errores[] = 'Debes ingresar si cuenta con estacionamientos';
-    }
-
-    if(!$vendedorid) {
-      $errores[] = 'Debes ingresar el vendedor';
-    }
-
-    if(!$imagen['name'] || $imagen['error']) {
-      $errores[] = 'La imagen es obligatoria';
-    }
-
-    //validacion por tamano
-    $medida = 1000 * 1000;
-
-    if($imagen['size'] > $medida) {
-      $errores[] = 'El tamano de la imagen supera 1MB';
-    }
+    $errores = $propiedad->validarErrores();
 
 
-    // var_dump($errores);
-    // exit; validador de pruebas
-    
     //Revisar que el array de errores esta vacio
     if(empty($errores)){
 
+
       //carpeta de imagenes
-      $carpetaIMG = '../../imagenes/';
-      if(!is_dir($carpetaIMG)) {
-        mkdir($carpetaIMG);
+      //$carpetaIMG = '../../imagenes/';
+      if(!is_dir($CARPETA_IMG)) {
+        mkdir($CARPETA_IMG);
       }
-
-      //generar nombre para imagenes
-      $nombreIMG = md5(uniqid( rand(), true ) );
-
-      //var_dump($nombreIMG); visualizacion de valor de nombre imagen en base a md5 y rand
-
-      //Subir la imagen en formatos jpg y png
-      if($imagen['type'] === 'image/jpeg') {
-        $nombreIMG .= '.jpg';
-        move_uploaded_file( $imagen['tmp_name'], $carpetaIMG . $nombreIMG);
-      } elseif ($imagen['type'] === 'image/png') {
-          $nombreIMG .= '.png';
-          move_uploaded_file( $imagen['tmp_name'], $carpetaIMG . $nombreIMG);
-        } else {
-          $errores[] = 'El formato de imagen no es compartible';
-        }
+  
+      //Guardar imagen en servidor
+      $imagen->save(CARPETA_IMG . $nombreIMG);
       
+      $propiedad->guardar();
 
-        
-
-      // echo $query; sirve para validar la informacion del query si esta subiendo toda la informacion solicitada en el formulario.
-
-      //Almacenar en la base de datos
-      $resultado = mysqli_query($baseDatos, $query);
-
-      if($resultado) {
-        //echo 'Informacion publicada';
-
-        header('Location: /admin?resultado=1');
-      }
+      
     } 
   }
-  
-
   
   incluirTemplate('header');
 ?>
@@ -173,47 +71,7 @@
     <?php endforeach; ?>
 
     <form class="formulario" method="POST" action="/admin/propiedades/crear.php" enctype="multipart/form-data">  <!-- Get para cuando se requiera ver datos en la barra nav y POST para no mostrarlos -->
-      <fieldset>
-        <legend>Informacion general de propiedad (No ingresar caracteres especiales o acentos)</legend>
-
-        <label for="titulo">Nombre propiedad</label>
-        <input type="text" name="titulo" id="titulo" placeholder="Ingresar nombre" value="<?php echo $titulo; ?>">
-
-        <label for="precio">Precio</label>
-        <input type="number" name="precio"  id="precio" placeholder="Precio" value="<?php echo $precio; ?>">
-
-        <label for="imagen">Imagen:</label>
-        <input type="file" name="imagen" id="imagen" accept="image/jpeg, image/png" value="<?php echo $imagen; ?>">
-
-        <label for="descripcion">Descripcion</label>
-        <textarea name="descripcion" id="descripcion" ><?php echo $descripcion; ?></textarea>
-      </fieldset>
-
-      <fieldset>
-        <legend>Informacion de la propiedad</legend>
-        <label for="habitaciones">Habitaciones</label>
-        <input type="number" name="habitaciones" id="habitaciones" placeholder="Habitaciones" min="1" max="9" value="<?php echo $habitaciones; ?>">
-
-        <label for="wc">Sanitarios</label>
-        <input type="number" name="wc" id="wc" placeholder="Sanitarios" value="<?php echo $sanitarios; ?>">
-
-        <label for="estacionamientos">Estacionamientos</label>
-        <input type="number" name="estacionamientos" id="estacionamientos" placeholder="Estacionamientos" value="<?php echo $estacionamiento; ?>">
-
-      </fieldset>
-
-      <fieldset>
-        <legend>Vendedor</legend>
-        <select name="Vendedores_id">
-          <option value="">--Seleccione--</option>
-          <?php while($registro = mysqli_fetch_assoc($resultadoCVendedores)): ?>
-            <option  <?php echo $vendedorid == $registro['id'] ? 'selected' : ''; ?> value="<?php echo $registro['id']; ?>"> 
-              <?php echo $registro['nombre'] . ' ' . $registro['apellido']; ?> 
-            </option>
-          <?php endwhile; ?>
-        </select>
-      </fieldset>
-
+      <?php require '../../includes/templates/formularioPropiedades.php';?>
       <input type="submit" value="Crear propiedad" class="boton boton-verde">
     </form>
   </main>

@@ -1,46 +1,42 @@
 <?php
 require '../includes/app.php';
 estadoLogin();
-
- //1. Importar la conexion a la base de datos
   $baseDatos = conectarBD();
-  //var_dump($baseDatos);
+  use App\Propiedad;
+  use App\Vendedores;
 
-  //2. validar la conexion
-  // if($baseDatos) { 
-  //   echo 'conexion exitosa';
-  // } else {
-  //   echo 'error en conexion';
-  // }
-
-  //3. Escribir el query
-  $query = "SELECT * FROM propiedades";
-
-  //4. Consultar la base de datos
-  $listadoPropiedades = mysqli_query($baseDatos, $query);
+  $propiedades = Propiedad::all();
+  $vendedor = Vendedores::all();
+  //debuguear($propiedades);
 
   
   //Apartado de eliminacion de propiedad
   if($_SERVER['REQUEST_METHOD'] === 'POST') {
+    //debuguear($_POST);
     $idEliminar = $_POST['idEliminar'];
     $idEliminar = filter_var($idEliminar, FILTER_VALIDATE_INT);
     //var_dump($idEliminar);
 
     if($idEliminar) {
-      //Consulta de solicitud de imagen
-      $cImagen = "SELECT imagen FROM  propiedades WHERE id = $idEliminar";
-      $rcImagen = mysqli_query($baseDatos, $cImagen);
-      $imagenPropiedad = mysqli_fetch_assoc($rcImagen);
-      //var_dump( $imagenPropiedad);
-      unlink('../imagenes/' . $imagenPropiedad['imagen']);
 
-      $eliminar = "DELETE FROM  propiedades WHERE id = $idEliminar";
-      $accion = mysqli_query($baseDatos, $eliminar);
-      echo $eliminar;
-
-      if($eliminar) {
-        header('location: /admin?resultado=3');
+      $tipo = $_POST['tipo'];
+      //debuguear($tipo);
+      if(validarTipo($tipo)) {
+        //debuguear('Es valido');
+        
+        //Compara lo que va a eliminar
+        if($tipo === 'propiedad') {
+          $propiedad = Propiedad::find($idEliminar);
+          $propiedad->eliminar();
+        } else if($tipo === 'vendedor') {
+          $vendedor = Vendedores::find($idEliminar);
+          $vendedor->eliminar();
+        }
+      } else {
+        //debuguear('No es valido');
       }
+
+      
     }
   }
 
@@ -57,20 +53,19 @@ estadoLogin();
     <h1>Administrador de bienes raices</h1> 
 
     <!-- Generador de alerta de propiedad creada -->
-    <?php if(intval($mensajePropiedadCreada)=== 1 ): ?>  <!--intval sirve para que tome como igual el valor string del mensaje de header/admin -->
-      <p class="alerta exito">Anuncio creado correctamente</p>
-    <?php  elseif(intval($mensajePropiedadCreada) === 2 ): ?>
-      <p class="alerta actualizacion">Anuncio Actualizado correctamente</p> 
-    <?php  elseif(intval($mensajePropiedadCreada) === 3 ): ?>
-      <p class="alerta error">Anuncio Eliminado correctamente</p>  
-    <?php  elseif(intval($mensajePropiedadCreada) === 4 ): ?>
-      <p class="alerta exito">Inicio de sesion correctamente</p> 
-    <?php endif;?>
+    <?php 
+      $mensaje = mostrarMensajes(intval($mensajePropiedadCreada));
+      if($mensaje) {  ?>
+      <p class="alerta exito"> <?php echo limpiar($mensaje); ?> </p>
+    <?php 
+      } 
+    ?>
 
 
     <a href="/admin/propiedades/crear.php" class="boton boton-verde">Nueva propiedad</a>
+    <a href="/admin/vendedores/crear.php" class="boton boton-amarillo-corto">Nuevo vendedor</a>
 
-
+    <h2>Propiedades</h2>
     <table class="propiedades">
       <thead>
         <tr>
@@ -83,26 +78,59 @@ estadoLogin();
       </thead>
 
       <tbody> <!--Mostrar las propiedades de la base de datos -->
-        <?php while( $propiedad = mysqli_fetch_assoc($listadoPropiedades) ): ?>
+        <?php foreach($propiedades as $propiedad): ?>
         <tr>
-          <td><?php echo $propiedad['id']; ?></td>
-          <td><?php echo $propiedad['titulo']; ?></td>
-          <td><img src='/imagenes/<?php echo $propiedad['imagen']; ?>' alt="imagen" class="imagen-tabla"></td>
-          <td>$<?php echo $propiedad['precio']; ?></td>
+          <td><?php echo $propiedad->id; ?></td>
+          <td><?php echo $propiedad->titulo; ?></td>
+          <td><img src='/imagenes/<?php echo $propiedad->imagen; ?>' alt="imagen" class="imagen-tabla"></td>
+          <td>$<?php echo $propiedad->precio; ?></td>
           <td>
             <form action="" method="POST">
-              <input type="hidden" name="idEliminar" value="<?php echo $propiedad['id']; ?>">
+              <input type="hidden" name="idEliminar" value="<?php echo $propiedad->id; ?>">
+              <input type="hidden" name="tipo" value="propiedad">
               <input type="submit" value="Eliminar" class="boton-rojo-block">
             </form>
-            <a href="/admin/propiedades/actualizar.php?id=<?php echo $propiedad['id']; ?>" class="boton-azul-block">Actualizar</a>
+            <a href="/admin/propiedades/actualizar.php?id=<?php echo $propiedad->id; ?>" class="boton-azul-block">Actualizar</a>
           </td>
         </tr>
-        <?php endwhile; ?>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+  </main>
+
+
+  
+  <h2>Vendedores</h2>
+  <table class="propiedades">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>telefono</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody> <!--Mostrar las propiedades de la base de datos -->
+        <?php foreach($vendedor as $vendedoritem): ?>
+        <tr>
+          <td><?php echo $vendedoritem->id; ?></td>
+          <td><?php echo $vendedoritem->nombre . " " . $vendedoritem->apellido; ?></td>
+          <td><?php echo $vendedoritem->telefono; ?></td>
+          <td>
+            <form action="" method="POST">
+              <input type="hidden" name="idEliminar" value="<?php echo $vendedoritem->id; ?>">
+              <input type="hidden" name="tipo" value="vendedor">
+              <input type="submit" value="Eliminar" class="boton-rojo-block">
+            </form>
+            <a href="/admin/vendedores/actualizar.php?id=<?php echo $vendedoritem->id; ?>" class="boton-azul-block">Actualizar</a>
+          </td>
+        </tr>
+        <?php endforeach; ?>
       </tbody>
     </table>
   </main>
 
   <?php 
-    mysqli_close($baseDatos); //cerrar la conexion
     incluirTemplate('footer');
   ?>

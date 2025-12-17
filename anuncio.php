@@ -1,47 +1,47 @@
 <?php
-  require 'includes/app.php';
-  incluirTemplate('header');
-
-  $baseDatos = conectarBD();
-
+  include './includes/app.php';
+  use App\Propiedad;
+  
+  
   $idPropiedad = $_GET['idPropiedad'] ?? null;
   $idPropiedad = filter_var($idPropiedad, FILTER_VALIDATE_INT);
-  echo $idPropiedad;
+  //echo $idPropiedad;
+  if(!$idPropiedad) {
+    header('Location: /admin');
+  }
 
-  //Consulta
-  $cPropiedades = "SELECT * FROM propiedades WHERE id = $idPropiedad";
-  $rcPropiedades = mysqli_query($baseDatos, $cPropiedades);
+  $propiedad = Propiedad::find($idPropiedad);
+  //debuguear($propiedades);
+
+  incluirTemplate('header');
 ?>
 
 
   <main class="contenedor seccion contenido-centrado">
-    <?php while($propiedad = mysqli_fetch_assoc($rcPropiedades)): ?>
-    <h1><?php echo $propiedad['titulo']; ?></h1>
-    <img src="/imagenes/<?php echo $propiedad['imagen']; ?>" alt="imagenPropiedad">
+    <h1><?php echo $propiedad->titulo; ?></h1>
+    <img src="/imagenes/<?php echo $propiedad->imagen; ?>" alt="imagenPropiedad">
 
     <div class="resumen-propiedad">
-      <p class="precio">$ <?php echo $propiedad['precio']; ?></p>
+      <p class="precio">$ <?php echo $propiedad->precio; ?></p>
       <ul class="iconos-caracteristicas">
           <li>
             <img src="/build/img/icono_wc.svg" alt="wc" loading="lazy">
-            <p><?php echo $propiedad['wc']; ?></p>
+            <p><?php echo $propiedad->wc; ?></p>
           </li>
           <li>
             <img src="/build/img/icono_estacionamiento.svg" alt="estacionamiento" loading="lazy">
-            <p><?php echo $propiedad['estacionamiento']; ?></p>
+            <p><?php echo $propiedad->estacionamiento; ?></p>
           </li>
           <li>
             <img src="/build/img/icono_dormitorio.svg" alt="dormitorio" loading="lazy">
-            <p><?php echo $propiedad['habitaciones']; ?></p>
+            <p><?php echo $propiedad->habitaciones; ?></p>
           </li>
         </ul>
 
-        <p><?php echo $propiedad['descripcion']; ?></p>
+        <p><?php echo $propiedad->descripcion; ?></p>
     </div>
-    <?php endwhile; ?>
   </main>
 
   <?php 
   incluirTemplate('footer');
-  mysqli_close($baseDatos);
   ?>

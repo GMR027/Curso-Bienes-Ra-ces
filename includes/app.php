@@ -6,6 +6,6 @@ require __DIR__ . '/../vendor/autoload.php';
 //conectarnos a la base de datos
 $solicudBaseDatos = conectarBD();
 
-use App\Propiedad;
+use App\ActiveRecord;
 
-Propiedad::confDatabase($solicudBaseDatos);
+ActiveRecord::confDatabase($solicudBaseDatos);

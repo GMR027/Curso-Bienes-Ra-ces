@@ -13,5 +13,7 @@
             "email": "e.gm27@outlook.com"
         }
     ],
-    "require": {}
+    "require": {
+        "intervention/image": "^3.11"
+    }
 }

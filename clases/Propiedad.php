@@ -1,11 +1,8 @@
 <?php 
 namespace App;
 
-use mysqli;
-
-class Propiedad  {
-  //Base de datos
-  protected static $infoBasedatos;
+class Propiedad extends ActiveRecord  {
+  protected static $tabla = 'propiedades';
   protected static $columnasDB = ['id','titulo', 'imagen', 'precio', 'descripcion', 'habitaciones', 'wc', 'estacionamiento', 'Vendedores_id', 'creado'];
 
   public $id;
@@ -19,64 +16,52 @@ class Propiedad  {
   public $Vendedores_id;
   public $creado;
 
-  //Definir conexion a base datos
-  public static function confDatabase($baseDatos) {
-  self::$infoBasedatos = $baseDatos;
-  }
 
   public function __construct($arreglo = [])
   {
-    $this->id = $arreglo['id'] ?? '';
+    $this->id = $arreglo['id'] ?? null;
     $this->titulo = $arreglo['titulo'] ?? '';
-    $this->imagen = $arreglo['imagen'] ?? 'imagen.jpg';
+    $this->imagen = $arreglo['imagenCargada'] ?? '';
     $this->precio = $arreglo['precio'] ?? '';
     $this->descripcion = $arreglo['descripcion'] ?? '';
-    $this->habitaciones = $arreglo['habitaciones'] ?? 0;
-    $this->wc = $arreglo['wc'] ?? 0;
-    $this->estacionamiento = $arreglo['estacionamiento'] ?? 0;
-    $this->Vendedores_id = $arreglo['Vendedores_id'] ?? 0;
+    $this->habitaciones = $arreglo['habitaciones'] ?? '';
+    $this->wc = $arreglo['wc'] ?? '';
+    $this->estacionamiento = $arreglo['estacionamiento'] ?? '';
+    $this->Vendedores_id = $arreglo['Vendedores_id'] ?? '';
     $this->creado = date('Y/m/d');
   }
-  
-  
 
-  public function guardar() {
-    //Sanitizar los datos
-    $atributos = $this->sanitizarDatos();
-
-    // CORREGIDO: Orden correcto de columnas y sin comillas en números
-    $query = " INSERT INTO propiedades (";
-    $query .= join(', ', array_keys($atributos));
-    $query .= ") VALUES ('"; 
-    $query .= join("', '", array_values($atributos));
-    $query .= "') ";
-
-
-      
-    $resultado = self::$infoBasedatos->query($query);
-    debuguear($resultado);
-  }
-
-  //identificar y unir los atributos de la base de datos
-  public function atributos() {
-    $atributos = [];
-    foreach(self::$columnasDB as $columna) {
-      if($columna === 'id') continue;
-      $atributos[$columna] = $this->$columna;
-    }
-    return $atributos;
-  }
-
-  public function sanitizarDatos() {
-    $atributos = $this->atributos();
-    $sanitizado = [];
-    
-
-    foreach($atributos as $key => $value) {
-      $sanitizado[$key] = self::$infoBasedatos->escape_string($value);
+  public function validarErrores() {
+    if(!$this->titulo) {
+      self::$errores[] = 'Debes ingresar un titulo';
     }
 
-    //debuguear($sanitizado);
-    return $sanitizado;
+    if(!$this->precio) {
+      self::$errores[] = 'Debes ingresar un precio';
+    }
+
+    if(strlen($this->descripcion) < 50) {  //< indica menor que
+      self::$errores[] = 'Debes ingresar una descripcion mas amplia mayor a 50 caracteres';
+    }
+
+    if(!$this->habitaciones) {
+      self::$errores[] = 'Debes ingresar el numero de habitaciones';
+    }
+
+    if(!$this->wc) {
+      self::$errores[] = 'Debes ingresar el numero de sanitarios';
+    }
+
+    if(!$this->estacionamiento) {
+      self::$errores[] = 'Debes ingresar si cuenta con estacionamientos';
+    }
+
+    if(!$this->imagen) {
+      self::$errores[] = 'La imagen es obligatoria';
+    }
+
+    return self::$errores;
+
   }
 }
+

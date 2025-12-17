@@ -1,5 +1,6 @@
 <?php
   require 'includes/app.php';
+  use App\ActiveRecord;
   incluirTemplate('header', $inicio = true);
 ?>
 
@@ -34,9 +35,7 @@
     <h2>Casas y depas en venta</h2>
 
     <?php 
-    $limite = 6;
     include 'includes/templates/anuncios.php'; 
-    
     ?>
 
     <div class="alinear-derecha">
